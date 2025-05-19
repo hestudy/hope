@@ -1,0 +1,1 @@
+ALTER TABLE `init_record` ADD `status` text NOT NULL;

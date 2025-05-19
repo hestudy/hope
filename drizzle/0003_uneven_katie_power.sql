@@ -1,0 +1,1 @@
+ALTER TABLE `init_record` DROP COLUMN `status`;
