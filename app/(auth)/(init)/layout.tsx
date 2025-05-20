@@ -1,8 +1,9 @@
 import { allStock, initRecord } from "@/db/schema";
 import db from "@/lib/db";
+import { stockBasic } from "@/tushare/stock_basic";
 import { eq } from "drizzle-orm";
 import { chunk } from "lodash";
-import React, { PropsWithChildren } from "react";
+import { PropsWithChildren } from "react";
 
 export default async function layout(props: PropsWithChildren) {
   const record = await db
@@ -12,35 +13,7 @@ export default async function layout(props: PropsWithChildren) {
   const result = record[0];
 
   if (!result) {
-    const res = await fetch("http://api.tushare.pro", {
-      body: JSON.stringify({
-        api_name: "stock_basic",
-        token: process.env.TUSHARE_TOKEN,
-        params: {
-          ts_code: "",
-          name: "",
-          exchange: "",
-          market: "",
-          is_hs: "",
-          list_status: "",
-          limit: "",
-          offset: "",
-        },
-        fields: [
-          "ts_code",
-          "symbol",
-          "name",
-          "area",
-          "industry",
-          "cnspell",
-          "market",
-          "list_date",
-          "act_name",
-          "act_ent_type",
-        ],
-      }),
-      method: "POST",
-    }).then((res) => res.json());
+    const res = await stockBasic();
     if (res.code === 0) {
       const result: (typeof allStock.$inferInsert)[] = [];
       res.data.items.forEach((item: any[]) => {

@@ -19,7 +19,7 @@ export async function saveStock(
     };
   }
 
-  await db.insert(stock).values({
+  const stockRes = await db.insert(stock).values({
     ...data,
     userId: session.user.id,
   });
