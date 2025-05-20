@@ -14,23 +14,13 @@ export default async function layout(props: PropsWithChildren) {
 
   if (!result) {
     const res = await stockBasic();
-    if (res.code === 0) {
-      const result: (typeof allStock.$inferInsert)[] = [];
-      res.data.items.forEach((item: any[]) => {
-        const data: any = {};
-        item.forEach((d, index) => {
-          data[res.data.fields[index]] = d;
-        });
-        result.push(data);
-      });
-      const chunkList = chunk(result, 100);
-      for (const item of chunkList) {
-        await db.insert(allStock).values(item);
-      }
-      await db.insert(initRecord).values({
-        name: "allStocks",
-      });
+    const chunkList = chunk(res, 100);
+    for (const item of chunkList) {
+      await db.insert(allStock).values(item);
     }
+    await db.insert(initRecord).values({
+      name: "allStocks",
+    });
   }
 
   return <>{props.children}</>;

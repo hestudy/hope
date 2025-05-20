@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -6,15 +8,16 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ComponentProps, PropsWithChildren } from "react";
+import { ComponentProps, PropsWithChildren, useState } from "react";
 import StockForm from "./stock-form";
 
 export default function StockFormDialog({
   children,
   ...props
 }: PropsWithChildren<ComponentProps<typeof StockForm>>) {
+  const [open, setOpen] = useState(false);
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -23,7 +26,13 @@ export default function StockFormDialog({
             Add a new stock to your portfolio.
           </DialogDescription>
         </DialogHeader>
-        <StockForm {...props} />
+        <StockForm
+          {...props}
+          onOk={(...args) => {
+            setOpen(false);
+            props.onOk?.(...args);
+          }}
+        />
       </DialogContent>
     </Dialog>
   );

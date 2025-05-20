@@ -1,4 +1,8 @@
+import { allStock } from "@/db/schema";
+
 export async function stockBasic() {
+  const result: (typeof allStock.$inferInsert)[] = [];
+
   const res = await fetch("http://api.tushare.pro", {
     body: JSON.stringify({
       api_name: "stock_basic",
@@ -29,5 +33,15 @@ export async function stockBasic() {
     method: "POST",
   }).then((res) => res.json());
 
-  return res;
+  if (res.code === 0) {
+    res.data.items.forEach((item: any[]) => {
+      const data: any = {};
+      item.forEach((d, index) => {
+        data[res.data.fields[index]] = d;
+      });
+      result.push(data);
+    });
+  }
+
+  return result;
 }

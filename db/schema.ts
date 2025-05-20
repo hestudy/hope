@@ -1,3 +1,4 @@
+import { relations } from "drizzle-orm";
 import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
 import { nanoid } from "nanoid";
 
@@ -128,6 +129,15 @@ export const stock = sqliteTable("stock", {
     .$onUpdateFn(() => new Date()),
 });
 
+export const stockRelations = relations(stock, ({ one }) => {
+  return {
+    stock: one(allStock, {
+      fields: [stock.stockId],
+      references: [allStock.id],
+    }),
+  };
+});
+
 export const stockPrice = sqliteTable("stock_price", {
   id: text("id")
     .primaryKey()
@@ -163,22 +173,22 @@ export const stockDaily = sqliteTable("stock_daily", {
     .references(() => stock.id, { onDelete: "cascade" }),
   trade_date: text("trade_date").notNull(),
   close: real("close").notNull(),
-  turnover_rate: real("turnover_rate").notNull(),
-  turnover_rate_f: real("turnover_rate_f").notNull(),
-  volume_ratio: real("volume_ratio").notNull(),
-  pe: real("pe").notNull(),
-  pe_ttm: real("pe_ttm").notNull(),
-  pb: real("pb").notNull(),
-  ps: real("ps").notNull(),
-  ps_ttm: real("ps_ttm").notNull(),
-  dv_ratio: real("dv_ratio").notNull(),
-  dv_ttm: real("dv_ttm").notNull(),
-  total_share: real("total_share").notNull(),
-  float_share: real("float_share").notNull(),
-  free_share: real("free_share").notNull(),
-  total_mv: real("total_mv").notNull(),
-  circ_mv: real("circ_mv").notNull(),
-  limit_status: text("limit_status").notNull(),
+  turnover_rate: real("turnover_rate"),
+  turnover_rate_f: real("turnover_rate_f"),
+  volume_ratio: real("volume_ratio"),
+  pe: real("pe"),
+  pe_ttm: real("pe_ttm"),
+  pb: real("pb"),
+  ps: real("ps"),
+  ps_ttm: real("ps_ttm"),
+  dv_ratio: real("dv_ratio"),
+  dv_ttm: real("dv_ttm"),
+  total_share: real("total_share"),
+  float_share: real("float_share"),
+  free_share: real("free_share"),
+  total_mv: real("total_mv"),
+  circ_mv: real("circ_mv"),
+  limit_status: text("limit_status"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
