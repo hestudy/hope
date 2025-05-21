@@ -13,6 +13,7 @@ import db from "@/lib/db";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
+import Link from "next/link";
 
 export default async function Home() {
   const session = await auth.api.getSession({
@@ -41,23 +42,25 @@ export default async function Home() {
       <div className="grid grid-cols-4 gap-4">
         {stocks.map((stock) => {
           return (
-            <Card key={stock.id}>
-              <CardHeader>
-                <CardTitle>
-                  {stock.stock.name}[{stock.stock.symbol}]
-                </CardTitle>
-                <CardDescription className="flex flex-wrap gap-2">
-                  <Badge>{stock.stock.industry}</Badge>
-                  <Badge>{stock.stock.area}</Badge>
-                  {stock.stock.act_name && (
-                    <Badge>{stock.stock.act_name}</Badge>
-                  )}
-                  {stock.stock.act_ent_type && (
-                    <Badge>{stock.stock.act_ent_type}</Badge>
-                  )}
-                </CardDescription>
-              </CardHeader>
-            </Card>
+            <Link key={stock.id} href={`/stock/${stock.id}`}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>
+                    {stock.stock.name}[{stock.stock.symbol}]
+                  </CardTitle>
+                  <CardDescription className="flex flex-wrap gap-2">
+                    <Badge>{stock.stock.industry}</Badge>
+                    <Badge>{stock.stock.area}</Badge>
+                    {stock.stock.act_name && (
+                      <Badge>{stock.stock.act_name}</Badge>
+                    )}
+                    {stock.stock.act_ent_type && (
+                      <Badge>{stock.stock.act_ent_type}</Badge>
+                    )}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            </Link>
           );
         })}
       </div>

@@ -110,9 +110,10 @@ export const stock_basic = sqliteTable("stock_basic", {
     .$onUpdateFn(() => new Date()),
 });
 
-export const allStockRelations = relations(stock_basic, ({ many }) => {
+export const stock_basic_relations = relations(stock_basic, ({ many }) => {
   return {
-    daily: many(daily_basic),
+    daily_basic: many(daily_basic),
+    daily: many(daily),
   };
 });
 
@@ -170,6 +171,15 @@ export const daily = sqliteTable("daily", {
     .$onUpdateFn(() => new Date()),
 });
 
+export const daily_relations = relations(daily, ({ one }) => {
+  return {
+    stock: one(stock_basic, {
+      fields: [daily.stockId],
+      references: [stock_basic.id],
+    }),
+  };
+});
+
 export const daily_basic = sqliteTable("daily_basic", {
   id: text("id")
     .primaryKey()
@@ -202,4 +212,13 @@ export const daily_basic = sqliteTable("daily_basic", {
     .notNull()
     .$defaultFn(() => new Date())
     .$onUpdateFn(() => new Date()),
+});
+
+export const daily_basic_relations = relations(daily_basic, ({ one }) => {
+  return {
+    stock: one(stock_basic, {
+      fields: [daily_basic.stockId],
+      references: [stock_basic.id],
+    }),
+  };
 });
