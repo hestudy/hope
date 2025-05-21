@@ -1,7 +1,7 @@
-import { allStock } from "@/db/schema";
+import { stock_basic } from "@/db/schema";
 
 export async function stockBasic() {
-  const result: (typeof allStock.$inferInsert)[] = [];
+  const result: (typeof stock_basic.$inferInsert)[] = [];
 
   const res = await fetch("http://api.tushare.pro", {
     body: JSON.stringify({

@@ -1,16 +1,16 @@
-import { daily_basic } from "@/db/schema";
+import { daily } from "@/db/schema";
 
-export async function dailyBasic(params: {
+export async function getDaily(params: {
   ts_code: string;
   trade_date?: string;
   start_date?: string;
   end_date?: string;
 }) {
-  const result: (typeof daily_basic.$inferInsert)[] = [];
+  const result: (typeof daily.$inferInsert)[] = [];
 
   const res = await fetch("http://api.tushare.pro", {
     body: JSON.stringify({
-      api_name: "daily_basic",
+      api_name: "daily",
       token: process.env.TUSHARE_TOKEN,
       params: {
         ts_code: params.ts_code,
@@ -23,22 +23,15 @@ export async function dailyBasic(params: {
       fields: [
         "ts_code",
         "trade_date",
+        "open",
+        "high",
+        "low",
         "close",
-        "turnover_rate",
-        "turnover_rate_f",
-        "volume_ratio",
-        "pe",
-        "pe_ttm",
-        "pb",
-        "ps",
-        "ps_ttm",
-        "dv_ratio",
-        "dv_ttm",
-        "total_share",
-        "float_share",
-        "free_share",
-        "total_mv",
-        "circ_mv",
+        "pre_close",
+        "change",
+        "pct_chg",
+        "vol",
+        "amount",
       ],
     }),
     method: "POST",

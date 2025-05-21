@@ -80,7 +80,7 @@ export const initRecord = sqliteTable("init_record", {
     .$onUpdateFn(() => new Date()),
 });
 
-export const allStock = sqliteTable("all_stock", {
+export const stock_basic = sqliteTable("stock_basic", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => nanoid()),
@@ -110,6 +110,12 @@ export const allStock = sqliteTable("all_stock", {
     .$onUpdateFn(() => new Date()),
 });
 
+export const allStockRelations = relations(stock_basic, ({ many }) => {
+  return {
+    daily: many(daily_basic),
+  };
+});
+
 export const stock = sqliteTable("stock", {
   id: text("id")
     .primaryKey()
@@ -119,7 +125,7 @@ export const stock = sqliteTable("stock", {
     .references(() => user.id, { onDelete: "cascade" }),
   stockId: text("stock_id")
     .notNull()
-    .references(() => allStock.id, { onDelete: "cascade" }),
+    .references(() => stock_basic.id, { onDelete: "cascade" }),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -131,30 +137,30 @@ export const stock = sqliteTable("stock", {
 
 export const stockRelations = relations(stock, ({ one }) => {
   return {
-    stock: one(allStock, {
+    stock: one(stock_basic, {
       fields: [stock.stockId],
-      references: [allStock.id],
+      references: [stock_basic.id],
     }),
   };
 });
 
-export const stockPrice = sqliteTable("stock_price", {
+export const daily = sqliteTable("daily", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => nanoid()),
   stockId: text("stock_id")
     .notNull()
-    .references(() => allStock.id, { onDelete: "cascade" }),
+    .references(() => stock_basic.id, { onDelete: "cascade" }),
   trade_date: text("trade_date").notNull(),
   open: real("open").notNull(),
   high: real("high").notNull(),
   low: real("low").notNull(),
   close: real("close").notNull(),
-  pre_close: real("pre_close").notNull(),
-  change: real("change").notNull(),
-  pct_change: real("pct_change").notNull(),
-  vol: real("vol").notNull(),
-  amount: real("amount").notNull(),
+  pre_close: real("pre_close"),
+  change: real("change"),
+  pct_change: real("pct_change"),
+  vol: real("vol"),
+  amount: real("amount"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),
@@ -164,13 +170,13 @@ export const stockPrice = sqliteTable("stock_price", {
     .$onUpdateFn(() => new Date()),
 });
 
-export const stockDaily = sqliteTable("stock_daily", {
+export const daily_basic = sqliteTable("daily_basic", {
   id: text("id")
     .primaryKey()
     .$defaultFn(() => nanoid()),
   stockId: text("stock_id")
     .notNull()
-    .references(() => allStock.id, { onDelete: "cascade" }),
+    .references(() => stock_basic.id, { onDelete: "cascade" }),
   trade_date: text("trade_date").notNull(),
   close: real("close").notNull(),
   turnover_rate: real("turnover_rate"),
