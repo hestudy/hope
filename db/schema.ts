@@ -144,7 +144,7 @@ export const stockPrice = sqliteTable("stock_price", {
     .$defaultFn(() => nanoid()),
   stockId: text("stock_id")
     .notNull()
-    .references(() => stock.id, { onDelete: "cascade" }),
+    .references(() => allStock.id, { onDelete: "cascade" }),
   trade_date: text("trade_date").notNull(),
   open: real("open").notNull(),
   high: real("high").notNull(),
@@ -170,7 +170,7 @@ export const stockDaily = sqliteTable("stock_daily", {
     .$defaultFn(() => nanoid()),
   stockId: text("stock_id")
     .notNull()
-    .references(() => stock.id, { onDelete: "cascade" }),
+    .references(() => allStock.id, { onDelete: "cascade" }),
   trade_date: text("trade_date").notNull(),
   close: real("close").notNull(),
   turnover_rate: real("turnover_rate"),

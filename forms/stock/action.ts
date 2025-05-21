@@ -41,25 +41,32 @@ export async function saveStock(
     });
 
     if (stockRecord?.stock.ts_code) {
-      const end = dayjs();
-      const start = end.subtract(1, "year");
-      const res = await daily({
-        ts_code: stockRecord.stock.ts_code,
-        start_date: start.format("YYYYMMDD"),
-        end_date: end.format("YYYYMMDD"),
-      });
+      const count = await db.$count(
+        stockDaily,
+        eq(stockDaily.stockId, stockRecord.stockId)
+      );
 
-      const chunkList = chunk(res, 100);
+      if (count === 0) {
+        const end = dayjs();
+        const start = end.subtract(1, "year");
+        const res = await daily({
+          ts_code: stockRecord.stock.ts_code,
+          start_date: start.format("YYYYMMDD"),
+          end_date: end.format("YYYYMMDD"),
+        });
 
-      for (const chunk of chunkList) {
-        await db.insert(stockDaily).values(
-          chunk.map((d) => {
-            return {
-              ...d,
-              stockId: stockRecord.id,
-            };
-          })
-        );
+        const chunkList = chunk(res, 100);
+
+        for (const chunk of chunkList) {
+          await db.insert(stockDaily).values(
+            chunk.map((d) => {
+              return {
+                ...d,
+                stockId: stockRecord.stockId,
+              };
+            })
+          );
+        }
       }
     }
   }
