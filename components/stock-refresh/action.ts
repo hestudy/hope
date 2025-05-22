@@ -5,7 +5,7 @@ import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { getDaily } from "@/tushare/get_daily";
 import dayjs from "dayjs";
-import { and, asc, desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { isEmpty } from "lodash";
 import { headers } from "next/headers";
 

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { use, useCallback, useMemo } from "react";
-import { getStockChartData } from "./action";
+import { useCallback } from "react";
 import Echarts from "../echarts";
+import { getStockChartData } from "./action";
 
 const upColor = "#ec0000";
 const upBorderColor = "#8A0000";
