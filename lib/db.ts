@@ -1,6 +1,6 @@
+import * as schema from "@/db/schema";
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/libsql";
-import * as schema from "@/db/schema";
 
 const db = drizzle({
   connection: {
