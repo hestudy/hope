@@ -6,7 +6,7 @@ export function MA(data: number[], period: number): number[] {
     const sum = data.slice(i, i + period).reduce((a, b) => a + b, 0);
     result.push(sum / period);
   }
-  return result;
+  return [...Array.from({ length: period - 1 }, () => 0), ...result];
 }
 
 // 计算简单移动平均线（SMA）
