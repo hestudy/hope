@@ -5,7 +5,8 @@ import { auth } from "@/lib/auth";
 import db from "@/lib/db";
 import { getDaily } from "@/tushare/get_daily";
 import dayjs from "dayjs";
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
+import { isEmpty } from "lodash";
 import { headers } from "next/headers";
 
 export async function refreshStock(id: string) {
@@ -25,7 +26,7 @@ export async function refreshStock(id: string) {
       stock: {
         with: {
           daily: {
-            orderBy: asc(daily.trade_date),
+            orderBy: desc(daily.trade_date),
             limit: 1,
           },
         },
@@ -33,7 +34,7 @@ export async function refreshStock(id: string) {
     },
   });
 
-  let lastTradeDate = record?.stock.daily[0].trade_date;
+  let lastTradeDate = record?.stock.daily[0]?.trade_date;
 
   if (!lastTradeDate) {
     lastTradeDate = dayjs().subtract(1, "year").format("YYYYMMDD");
@@ -45,12 +46,18 @@ export async function refreshStock(id: string) {
     end_date: dayjs().format("YYYYMMDD"),
   });
 
-  await db.insert(daily).values(
-    dailyData.map((item) => ({
-      ...item,
-      stockId: record?.stock.id!,
-    }))
+  const newDailyData = dailyData.filter((item) =>
+    dayjs(item.trade_date).isAfter(dayjs(lastTradeDate))
   );
+
+  if (!isEmpty(newDailyData)) {
+    await db.insert(daily).values(
+      newDailyData.map((item) => ({
+        ...item,
+        stockId: record?.stock.id!,
+      }))
+    );
+  }
 
   return {
     success: true,

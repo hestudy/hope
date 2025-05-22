@@ -24,7 +24,7 @@ export default function Echarts(props: {
         chart.dispose();
       };
     }
-  }, []);
+  }, [props.option]);
 
   return <div ref={chartRef} style={props.style} className={props.className} />;
 }
